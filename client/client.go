@@ -1,0 +1,48 @@
+package main
+
+import (
+	"bufio"
+	"fmt"
+	"net"
+	"os"
+	"strings"
+)
+
+func main() {
+
+	CONNECT := "localhost:1313"
+	c, err := net.Dial("tcp", CONNECT)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Print("Enter phone number:\n>> ")
+	var pNum string
+	var name string
+	fmt.Scan(&pNum)
+	fmt.Fprintf(c, pNum+"\n")
+	message, _ := bufio.NewReader(c).ReadString('\n')
+	if strings.TrimSpace(string(message)) == "username" {
+		fmt.Print("Enter user name:\n>> ")
+		fmt.Scan(&name)
+		fmt.Fprintf(c, name+"\n")
+		message, _ = bufio.NewReader(c).ReadString('\n')
+		fmt.Print("->: " + message)
+	} else {
+		fmt.Print("->: " + message)
+	}
+
+	for {
+		reader := bufio.NewReader(os.Stdin)
+		fmt.Print(">> ")
+		text, _ := reader.ReadString('\n')
+		fmt.Fprintf(c, text+"\n")
+
+		message, _ = bufio.NewReader(c).ReadString('\n')
+		fmt.Print("->: " + message)
+		if strings.TrimSpace(string(text)) == "STOP" {
+			fmt.Println("TCP client exiting...")
+			return
+		}
+	}
+}
