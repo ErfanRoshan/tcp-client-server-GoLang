@@ -19,7 +19,7 @@ type User struct {
 	Name        string
 }
 
-func WriteJson(fileAddress string, users *[]User) {
+func SaveJson(fileAddress string, users *[]User) {
 	f, err := os.Create(fileAddress)
 
 	if err != nil {
@@ -35,7 +35,7 @@ func WriteJson(fileAddress string, users *[]User) {
 	}
 }
 
-func ReadJson(fileAddress string) []User {
+func LoadJson(fileAddress string) []User {
 	file, err := os.Open(fileAddress)
 	if err != nil {
 		log.Fatal(err)
@@ -87,7 +87,7 @@ func handleConnection(c net.Conn) {
 		user.Name = name
 		user.PhoneNumber = pNum
 		userList = append(userList, user)
-		WriteJson(address, &userList)
+		SaveJson(address, &userList)
 	}
 
 	c.Write([]byte(string(name + " : connected\n")))
@@ -107,7 +107,7 @@ func handleConnection(c net.Conn) {
 		}
 		fmt.Println(temp)
 		// counter := strconv.Itoa(count) + "\n"
-		// c.Write([]byte(string(counter)))
+		// c.Write([]byte(string("delivered\n")))
 	}
 	c.Close()
 }
@@ -124,7 +124,7 @@ func main() {
 
 		defer f.Close()
 	} else {
-		userList = ReadJson(address)
+		userList = LoadJson(address)
 	}
 	l, err := net.Listen("tcp4", PORT)
 	if err != nil {
