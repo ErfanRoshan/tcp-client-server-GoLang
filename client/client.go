@@ -6,7 +6,29 @@ import (
 	"net"
 	"os"
 	"strings"
+	"time"
 )
+
+func rFS(c net.Conn) {
+	for {
+		// fmt.Print("rfS")
+		message, _ := bufio.NewReader(c).ReadString('\n')
+		fmt.Print("->: " + message)
+	}
+}
+func wTS(c net.Conn) {
+	for {
+		// fmt.Print("wTS")
+		reader := bufio.NewReader(os.Stdin)
+		fmt.Print(">> ")
+		text, _ := reader.ReadString('\n')
+		fmt.Fprintf(c, text+"\n")
+		if strings.TrimSpace(string(text)) == "STOP" {
+			fmt.Println("TCP client exiting...")
+			return
+		}
+	}
+}
 
 func main() {
 
@@ -31,18 +53,22 @@ func main() {
 	} else {
 		fmt.Print("->: " + message)
 	}
+	go rFS(c)
+	go wTS(c)
 
-	for {
-		reader := bufio.NewReader(os.Stdin)
-		fmt.Print(">> ")
-		text, _ := reader.ReadString('\n')
-		fmt.Fprintf(c, text+"\n")
+	time.Sleep(5000000 * time.Second)
+	// for {
+	// 	reader := bufio.NewReader(os.Stdin)
+	// 	fmt.Print(">> ")
+	// 	text, _ := reader.ReadString('\n')
+	// 	fmt.Fprintf(c, text+"\n")
 
-		message, _ = bufio.NewReader(c).ReadString('\n')
-		fmt.Print("->: " + message)
-		if strings.TrimSpace(string(text)) == "STOP" {
-			fmt.Println("TCP client exiting...")
-			return
-		}
-	}
+	// 	message, _ = bufio.NewReader(c).ReadString('\n')
+	// 	fmt.Print("->: " + message)
+	// 	if strings.TrimSpace(string(text)) == "STOP" {
+	// 		fmt.Println("TCP client exiting...")
+	// 		return
+	// 	}
+
+	// }
 }
