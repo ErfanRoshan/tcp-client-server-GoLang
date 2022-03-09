@@ -23,7 +23,7 @@ func main() {
 	fmt.Fprintf(c, pNum+"\n")
 	message, _ := bufio.NewReader(c).ReadString('\n')
 	if strings.TrimSpace(string(message)) == "username" {
-		fmt.Print("Enter user name:\n>> ")
+		fmt.Print("Enter username:\n>> ")
 		fmt.Scan(&name)
 		fmt.Fprintf(c, name+"\n")
 		message, _ = bufio.NewReader(c).ReadString('\n')
