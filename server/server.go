@@ -70,6 +70,14 @@ func removeC(s []Conn, i int) []Conn {
 	return s[:len(s)-1]
 }
 
+func appendC(c net.Conn, pNum string) Conn {
+	var conn Conn
+	conn.Connection = &c
+	conn.PhoneNumber = pNum
+	connS = append(connS, conn)
+	return conn
+}
+
 func handleConnection(c net.Conn) {
 	phoneData, err1 := bufio.NewReader(c).ReadString('\n')
 	if err1 != nil {
@@ -133,19 +141,8 @@ func handleConnection(c net.Conn) {
 				cOthers.Write([]byte(string(name + " : " + temp + "\n")))
 			}
 		}
-		// fmt.Println(temp)
-		// counter := strconv.Itoa(count) + "\n"
-		// c.Write([]byte(string("delivered\n")))
 	}
 	c.Close()
-}
-
-func appendC(c net.Conn, pNum string) Conn {
-	var conn Conn
-	conn.Connection = &c
-	conn.PhoneNumber = pNum
-	connS = append(connS, conn)
-	return conn
 }
 
 func main() {
