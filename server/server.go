@@ -104,10 +104,7 @@ func handleConnection(c net.Conn) {
 	c.Write([]byte(string(name + " : connected\n")))
 
 	fmt.Println(name + " : connected")
-	var conn Conn
-	conn.Connection = &c
-	conn.PhoneNumber = pNum
-	connS = append(connS, conn)
+	conn := appendC(c, pNum)
 
 	for {
 		netData, err := bufio.NewReader(c).ReadString('\n')
@@ -141,6 +138,14 @@ func handleConnection(c net.Conn) {
 		// c.Write([]byte(string("delivered\n")))
 	}
 	c.Close()
+}
+
+func appendC(c net.Conn, pNum string) Conn {
+	var conn Conn
+	conn.Connection = &c
+	conn.PhoneNumber = pNum
+	connS = append(connS, conn)
+	return conn
 }
 
 func main() {
