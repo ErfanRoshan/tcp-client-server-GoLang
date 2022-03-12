@@ -6,10 +6,11 @@ import (
 	"net"
 	"os"
 	"strings"
-	"time"
+	"sync"
 )
 
-func rFS(c net.Conn) {
+func rFS(c net.Conn, wg *sync.WaitGroup) {
+	defer wg.Done()
 	for {
 		message, _ := bufio.NewReader(c).ReadString('\n')
 		if strings.TrimSpace(string(message)) == "STOP" {
@@ -19,7 +20,8 @@ func rFS(c net.Conn) {
 		}
 	}
 }
-func wTS(c net.Conn) {
+func wTS(c net.Conn, wg *sync.WaitGroup) {
+	defer wg.Done()
 	for {
 		reader := bufio.NewReader(os.Stdin)
 		fmt.Print(">> ")
@@ -33,7 +35,8 @@ func wTS(c net.Conn) {
 }
 
 func main() {
-
+	var wg sync.WaitGroup
+	wg.Add(2)
 	CONNECT := "localhost:1313"
 	c, err := net.Dial("tcp", CONNECT)
 	if err != nil {
@@ -55,8 +58,9 @@ func main() {
 	} else {
 		fmt.Print("->: " + message)
 	}
-	go rFS(c)
-	go wTS(c)
+	go rFS(c, &wg)
+	go wTS(c, &wg)
 
-	time.Sleep(5000000 * time.Second)
+	// time.Sleep(5000000 * time.Second)
+	wg.Wait()
 }
