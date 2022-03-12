@@ -60,7 +60,5 @@ func main() {
 	}
 	go rFS(c, &wg)
 	go wTS(c, &wg)
-
-	// time.Sleep(5000000 * time.Second)
 	wg.Wait()
 }
