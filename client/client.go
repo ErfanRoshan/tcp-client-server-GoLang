@@ -11,7 +11,6 @@ import (
 
 func rFS(c net.Conn) {
 	for {
-		// fmt.Print("rfS")
 		message, _ := bufio.NewReader(c).ReadString('\n')
 		if strings.TrimSpace(string(message)) == "STOP" {
 			return
@@ -22,7 +21,6 @@ func rFS(c net.Conn) {
 }
 func wTS(c net.Conn) {
 	for {
-		// fmt.Print("wTS")
 		reader := bufio.NewReader(os.Stdin)
 		fmt.Print(">> ")
 		text, _ := reader.ReadString('\n')
@@ -61,18 +59,4 @@ func main() {
 	go wTS(c)
 
 	time.Sleep(5000000 * time.Second)
-	// for {
-	// 	reader := bufio.NewReader(os.Stdin)
-	// 	fmt.Print(">> ")
-	// 	text, _ := reader.ReadString('\n')
-	// 	fmt.Fprintf(c, text+"\n")
-
-	// 	message, _ = bufio.NewReader(c).ReadString('\n')
-	// 	fmt.Print("->: " + message)
-	// 	if strings.TrimSpace(string(text)) == "STOP" {
-	// 		fmt.Println("TCP client exiting...")
-	// 		return
-	// 	}
-
-	// }
 }
