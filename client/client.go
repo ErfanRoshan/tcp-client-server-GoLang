@@ -13,7 +13,11 @@ func rFS(c net.Conn) {
 	for {
 		// fmt.Print("rfS")
 		message, _ := bufio.NewReader(c).ReadString('\n')
-		fmt.Print("->: " + message)
+		if strings.TrimSpace(string(message)) == "STOP" {
+			return
+		} else {
+			fmt.Print("->: " + message)
+		}
 	}
 }
 func wTS(c net.Conn) {
