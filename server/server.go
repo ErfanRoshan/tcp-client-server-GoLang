@@ -13,10 +13,16 @@ import (
 const address = "users.txt"
 
 var userList []User
+var connS []Conn
 
 type User struct {
 	PhoneNumber string
 	Name        string
+}
+
+type Conn struct {
+	Connection  *(net.Conn)
+	PhoneNumber string
 }
 
 func SaveJson(fileAddress string, users *[]User) {
@@ -59,6 +65,11 @@ func LoadJson(fileAddress string) []User {
 	return users
 }
 
+func removeC(s []Conn, i int) []Conn {
+	s[i] = s[len(s)-1]
+	return s[:len(s)-1]
+}
+
 func handleConnection(c net.Conn) {
 	phoneData, err1 := bufio.NewReader(c).ReadString('\n')
 	if err1 != nil {
@@ -93,6 +104,10 @@ func handleConnection(c net.Conn) {
 	c.Write([]byte(string(name + " : connected\n")))
 
 	fmt.Println(name + " : connected")
+	var conn Conn
+	conn.Connection = &c
+	conn.PhoneNumber = pNum
+	connS = append(connS, conn)
 
 	for {
 		netData, err := bufio.NewReader(c).ReadString('\n')
@@ -103,9 +118,25 @@ func handleConnection(c net.Conn) {
 
 		temp := strings.TrimSpace(string(netData))
 		if temp == "STOP" {
+			idx := -1
+			for i := 0; i < len(connS); i++ {
+				if connS[i].Connection == conn.Connection {
+					idx = i
+					break
+				}
+			}
+			connS = removeC(connS, idx)
+			fmt.Println(name + " : disconnected")
+			c.Write([]byte(string("STOP\n")))
 			break
 		}
-		fmt.Println(temp)
+		for _, connection := range connS {
+			if connection.PhoneNumber != conn.PhoneNumber {
+				cOthers := *(connection.Connection)
+				cOthers.Write([]byte(string(name + " : " + temp + "\n")))
+			}
+		}
+		// fmt.Println(temp)
 		// counter := strconv.Itoa(count) + "\n"
 		// c.Write([]byte(string("delivered\n")))
 	}
